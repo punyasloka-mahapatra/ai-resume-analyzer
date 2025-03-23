@@ -1,61 +1,77 @@
-# 📄 AI Resume Analyzer (with Machine Learning)
+# 🌟 AI Resume Analyzer
 
-## 🚀 Overview
-The **AI Resume Analyzer** is a Streamlit-based web application that extracts text from resumes (PDF/DOCX), identifies key skills, and evaluates how well a resume matches a job description using **Scikit-Learn's TF-IDF and Cosine Similarity**.
-
-## 🔥 Features
-✅ Upload **PDF/DOCX** resumes for analysis  
-✅ Extract text and **identify skills** from resumes  
-✅ Paste a **job description** for comparison  
-✅ Uses **TF-IDF & Cosine Similarity** for accurate job matching  
-✅ **Streamlit-based UI** for easy interaction
-
-## 📦 Installation
-
-1. **Clone the Repository** (if using GitHub)
-   ```sh
-   git clone https://github.com/punyasloka-mahapatra/ai-resume-analyzer
-   cd ai-resume-analyzer
-   ```
-
-2. **Install Dependencies**
-   ```sh
-   pip install -r requirements.txt
-   python -m spacy download en_core_web_sm
-   ```
-
-## ▶️ How to Run
-
-Run the following command to start the web app:
-```sh
-streamlit run app.py
-```
-
-Then, open the **localhost link** in your browser to use the app!
-
-## 🛠️ Technologies Used
-- **Python** (Core programming language)
-- **Streamlit** (Web application framework)
-- **PDFPlumber** (Extracts text from PDF resumes)
-- **Python-Docx** (Extracts text from DOCX resumes)
-- **SpaCy** (Performs NLP tasks like named entity recognition)
-- **Scikit-Learn** (TF-IDF & Cosine Similarity for job matching)
-
-## 📌 Usage
-1. **Upload a Resume (PDF/DOCX)**
-2. **View extracted text and identified skills**
-3. **Paste a job description in the sidebar**
-4. **Get a job match percentage**
-
-## 💡 Future Enhancements
-- 🤖 **Machine Learning-based skill extraction**
-- 📊 **More advanced job-resume matching algorithms**
-- 🏆 **Resume ranking for multiple job descriptions**
-
-## 📧 Contact
-For any questions or suggestions, feel free to reach out at **punyasloka.mahapatra@myyahoo.com**.
+AI Resume Analyzer is a **Streamlit-based web application** that evaluates resumes by comparing them against a given job description. It calculates a similarity score using **TF-IDF vectorization** and **Cosine Similarity**, helping job seekers understand how well their resume fits a specific job role.
 
 ---
 
-**Enjoy analyzing resumes with AI! 🚀**
+## 🚀 Features
+✅ Upload resumes in **PDF** or **DOCX** format.  
+✅ Enter a job description to compare against the resume.  
+✅ Uses **TF-IDF Vectorization** and **Cosine Similarity** to compute a relevance score.  
+✅ Provides a **resume score (0-100%)** and a **fit status** (Fits Well / Needs Improvement).  
+✅ User-friendly **Streamlit UI**.
 
+---
+
+## 🛠️ Installation
+### Prerequisites
+Ensure you have Python installed (>=3.7). Install the required dependencies using:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 📌 Usage
+Run the Streamlit application:
+
+```bash
+streamlit run ai_resume_analyzer.py
+```
+
+### Steps to Use
+1️⃣ Enter the job description in the provided text area.  
+2️⃣ Upload your resume in **PDF** or **DOCX** format.  
+3️⃣ Click on **Analyze Resume** to get the score and fit status.
+
+---
+
+## 🔧 Technologies Used
+- 🐍 **Python**
+- 📊 **Scikit-learn** (for text processing and similarity calculation)
+- 🔠 **NLTK** (for text preprocessing)
+- 📄 **PDFPlumber & python-docx** (for resume extraction)
+- 🎨 **Streamlit** (for UI)
+
+---
+
+## 📊 Example Output
+```
+Resume Score: 78.5%
+Fit Status: Fits Well
+```
+
+---
+
+## 📜 License
+This project is licensed under the **MIT License**.
+
+---
+
+## 🤝 Contributing
+Feel free to **fork** this repository and contribute by submitting **pull requests**.
+
+---
+
+## 👤 Author
+Developed by **[Punyasloka Mahapatra]**
+
+## 📬 Contact
+💌 **Email**: punyasloka.mahapatra@myyahoo.com
+🔗 **LinkedIn**: www.linkedin.com/in/punyasloka-mahapatra-966080148
+🐙 **GitHub**: https://github.com/punyasloka-mahapatra
+
+---
+
+🌟 **Star this repository** if you find it useful! 😊

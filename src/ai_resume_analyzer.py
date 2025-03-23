@@ -1,66 +1,72 @@
-import streamlit as st
+import os
 import pdfplumber
 import docx
-import spacy
-import os
+import numpy as np
+import nltk
+import streamlit as st
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-nlp = spacy.load("en_core_web_sm")
+nltk.download('punkt')
+nltk.download('stopwords')
 
-def extract_text_from_pdf(pdf_file):
-    with pdfplumber.open(pdf_file) as pdf:
-        text = "\n".join([page.extract_text() for page in pdf.pages if page.extract_text()])
+def extract_text_from_pdf(pdf_path):
+    text = ""
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text() + " "
     return text
 
+def extract_text_from_docx(docx_path):
+    doc = docx.Document(docx_path)
+    return " ".join([para.text for para in doc.paragraphs])
 
-def extract_text_from_docx(docx_file):
-    doc = docx.Document(docx_file)
-    return "\n".join([para.text for para in doc.paragraphs])
+def preprocess_text(text):
+    tokens = word_tokenize(text.lower())
+    tokens = [word for word in tokens if word.isalnum()]
+    tokens = [word for word in tokens if word not in stopwords.words('english')]
+    return " ".join(tokens)
 
-
-def extract_skills(text):
-    skills = ["Java", "Python", "AWS", "Spring Boot", "Docker", "Kubernetes", "CI/CD"]
-    found_skills = [skill for skill in skills if skill.lower() in text.lower()]
-    return found_skills
-
-
-def calculate_resume_match(resume_text, job_description):
+def calculate_resume_score(resume_text, job_desc_text):
     vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform([resume_text, job_description])
-    similarity_score = cosine_similarity(tfidf_matrix[0], tfidf_matrix[1])[0][0]
-    return round(similarity_score * 100, 2)
+    vectors = vectorizer.fit_transform([resume_text, job_desc_text])
+    similarity_score = cosine_similarity(vectors[0], vectors[1])[0][0] * 100
+    return similarity_score
 
-
-st.title("📄 AI Resume Analyzer (with ML)")
-
-st.sidebar.header("Upload Resume")
-uploaded_file = st.sidebar.file_uploader("Choose a resume (PDF/DOCX)", type=["pdf", "docx"])
-
-if uploaded_file:
-    file_extension = os.path.splitext(uploaded_file.name)[1]
-
-
-    if file_extension == ".pdf":
-        resume_text = extract_text_from_pdf(uploaded_file)
-    elif file_extension == ".docx":
-        resume_text = extract_text_from_docx(uploaded_file)
+def analyze_resume(resume_path, job_description):
+    if resume_path.endswith('.pdf'):
+        resume_text = extract_text_from_pdf(resume_path)
+    elif resume_path.endswith('.docx'):
+        resume_text = extract_text_from_docx(resume_path)
     else:
-        st.error("Unsupported file format.")
-        st.stop()
+        return "Unsupported file format. Only PDF and DOCX are supported."
 
-    st.subheader("Extracted Resume Content")
-    st.text_area("Resume Text", resume_text, height=200)
+    resume_text = preprocess_text(resume_text)
+    job_description = preprocess_text(job_description)
 
+    score = calculate_resume_score(resume_text, job_description)
+    fit_status = "Fits Well" if score >= 60 else "Needs Improvement"
 
-    skills = extract_skills(resume_text)
-    st.subheader("Extracted Skills")
-    st.write("✅ **Skills Found:**", ", ".join(skills) if skills else "No skills detected.")
+    return {
+        "Resume Score": round(score, 2),
+        "Fit Status": fit_status
+    }
 
-    st.sidebar.header("Job Description")
-    job_description = st.sidebar.text_area("Paste Job Description Here")
+st.title("AI Resume Analyzer")
+job_description = st.text_area("Enter Job Description")
+resume_file = st.file_uploader("Upload Resume (PDF or DOCX)", type=["pdf", "docx"])
 
-    if job_description:
-        match_score = calculate_resume_match(resume_text, job_description)
-        st.subheader("Job Match Score")
-        st.write(f"✅ **Match Percentage:** {match_score}%")
+if st.button("Analyze Resume"):
+    if resume_file and job_description:
+        resume_path = f"temp_resume.{resume_file.name.split('.')[-1]}"
+        with open(resume_path, "wb") as f:
+            f.write(resume_file.read())
+
+        result = analyze_resume(resume_path, job_description)
+        st.write(f"**Resume Score:** {result['Resume Score']}%")
+        st.write(f"**Fit Status:** {result['Fit Status']}")
+        os.remove(resume_path)
+    else:
+        st.warning("Please upload a resume and enter a job description.")
